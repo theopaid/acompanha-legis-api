@@ -13,9 +13,8 @@ services:
     build: api/.
     env_file:
       - ./.env.example
-    # command: python ./api/manage.py runserver 0.0.0.0:8000
     volumes:
-      # - .:/opt/acompanha_legis
+      - nginx:/etc/nginx/conf.d
       - acompanha_static:/var/acompanha_legis/api/static
     depends_on:
       - db
@@ -26,20 +25,22 @@ services:
       - db
 
   portal:
-    image: acompanha_legis_portal
+    image: camara-data-portal
 
   nginx:
     image: nginx:alpine
     environment:
       - TZ=America/Sao_Paulo
     volumes:
-      - ./extras/nginx/api.conf:/etc/nginx/conf.d/default.conf
+      - nginx:/etc/nginx/conf.d
       - acompanha_static:/var/acompanha_legis/api/static
     depends_on:
       - api
+      - portal
     ports:
       - 80:80
 
 volumes:
   acompanha_data:
   acompanha_static:
+  nginx:
